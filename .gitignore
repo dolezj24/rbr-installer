@@ -1,2 +1,4 @@
 Richard Burns Rally.exe
 .idea/
+rbr-files/*
+!rbr-files/RichardBurnsRally.ini
