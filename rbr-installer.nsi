@@ -1,24 +1,24 @@
 !include LogicLib.nsh
 !include "MUI2.nsh"
 
+RequestExecutionLevel admin
 ;-------------------------------------
 ; The installer and uninstaller file names
-OutFile "Richard Burns Rally.exe"
+OutFile "installer.exe"
 !define UNINSTALLER "RichardBurnsRallyUnistall.exe"
 
 ;--------------------------------------
 ; The name of the installer
 Name "Richard Burns Rally"
-DirText "Select folder, where Richard Burns Rally will be installed. It is recommended to install RBR outside program files." "Folder"
-#InstallDir "test-dir"
-InstallDir "C:\"
-
-RequestExecutionLevel admin
 
 ;--------------------------------
 ;Interface Settings
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TEXT "You are installing Richard Burns Rally with Tournament plugin and NGP Physics."
+
+DirText "Select folder, where Richard Burns Rally will be installed. It is recommended to install RBR outside program files." "Folder"
+#InstallDir "test-dir"
+InstallDir "C:\"
 
 ;--------------------------------
 ; Pages install
@@ -33,14 +33,13 @@ RequestExecutionLevel admin
 !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
-; Variables can be only global, so they are initialized here together
 
 Section "Install"
   SectionIn RO
 
-  SetOutPath "$INSTDIR\RichardBurnsRally"
+  CopyFiles "$EXEDIR\*.*" "$INSTDIR\RichardBurnsRally"
 
-  File /r "rbr-files\"
+  Delete "$INSTDIR\RichardBurnsRally\installer.exe"
 
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\1.00.000" "" ""
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\InstallPath" "" "$INSTDIR\RichardBurnsRally"
@@ -60,7 +59,8 @@ Section "Install"
   FileWrite $4 "YRes = $1$\r$\n"
   FileClose $4
 
-  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
+  SetOutPath "$INSTDIR\RichardBurnsRally"
+  CreateShortcut "$DESKTOP\Richard Burns Rally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
 
   WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
   
@@ -69,7 +69,7 @@ SectionEnd ; end the install section
 Section "Uninstall"
   DeleteRegKey HKLM "SOFTWARE\SCi Games\Richard Burns Rally"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally"
-  Delete "$DESKTOP\RichardBurnsRally.lnk"
+  Delete "$DESKTOP\Richard Burns Rally.lnk"
 
   StrCpy $0 $INSTDIR
   StrCpy $1 0
@@ -86,7 +86,7 @@ Section "Uninstall"
   ${If} $2 == "RichardBurnsRally"
     RMDir /r "$INSTDIR"
   ${Else}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Install directory changed or renamed, files won't be deleted. You can delete them by yourself."
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Install directory changed or renamed, files won't be deleted. Delete rbr files by hand."
     Abort
   ${EndIf}
 SectionEnd ; End uninstall section

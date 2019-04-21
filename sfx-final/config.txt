@@ -1,0 +1,5 @@
+;!@Install@!UTF-8!
+Title="Richard Burns Rally with Tournament plugin and NGP Physics"
+BeginPrompt="Do you want to install Richard Burns Rally with Tournament plugin and NGP Physics?"
+RunProgram="installer.exe"
+;!@InstallEnd@!
