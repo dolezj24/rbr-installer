@@ -1,6 +1,7 @@
 !include LogicLib.nsh
 !include "MUI2.nsh"
 !include nsDialogs.nsh
+!include "textfunc.nsh"
 
 ;-------------------------------------
 ; The installer and uninstaller file names
@@ -21,10 +22,11 @@ RequestExecutionLevel admin
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TEXT "You are installing Richard Burns Rally with Tournament plugin and NGP Physics."
 
+
 ;--------------------------------
 ; Pages install
 !insertmacro MUI_PAGE_WELCOME
-Page custom MyPageFunc MyPageFuncLeave
+Page custom AccPageFunc AccPageFuncLeave
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 ; Pages uninstall
@@ -52,6 +54,8 @@ Section "Install"
   SetOutPath "$INSTDIR\RichardBurnsRally"
 
   File /r "rbr-files\"
+#  File rbr-files\RichardBurnsRally.ini
+#  File rbr-files\RichardBurnsRally_SSE.exe
 
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\1.00.000" "" ""
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\InstallPath" "" "$INSTDIR\RichardBurnsRally"
@@ -62,6 +66,8 @@ Section "Install"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoRepair" 1
 
+  ${LineFind} "$INSTDIR\RichardBurnsRally\RichardBurnsRally.ini" "" "1:-1" "TestRBRIniLine"
+
   System::Call 'user32::GetSystemMetrics(i 0) i .r0'
   System::Call 'user32::GetSystemMetrics(i 1) i .r1'
 
@@ -71,7 +77,7 @@ Section "Install"
   FileWrite $4 "YRes = $1$\r$\n"
   FileClose $4
 
-  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
+#  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
 
   WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
   
@@ -102,7 +108,8 @@ Section "Uninstall"
   ${EndIf}
 SectionEnd ; End uninstall section
 
-Function MyPageFunc
+Function AccPageFunc
+  !insertmacro MUI_HEADER_TEXT "Tournament plugin account" ""
   nsDialogs::Create 1018
   Pop $dialog
 
@@ -127,11 +134,25 @@ Function MyPageFunc
   nsDialogs::Show
 FunctionEnd
 
-Function MyPageFuncLeave
+Function AccPageFuncLeave
   ${NSD_GetText} $usernameTextBox $username
   ${NSD_GetText} $passwordTextBox $password
 FunctionEnd
 
 Function openRBRTMRegister
   ExecShell "open" "http://rbr.onlineracing.cz/forum/profile.php?mode=register"
+FunctionEnd
+
+Function TestRBRIniLine
+  ${TrimNewLines} '$R9' $R9
+
+  ${if} $R9 == "AutoLoginName = "
+    StrCpy $R9 "AutoLoginName = $username$\r$\n"
+  ${elseif} $R9 == "AutoLoginPassword = "
+    StrCpy $R9 "AutoLoginPassword = $password$\r$\n"
+  ${else}
+    StrCpy $R9 '$R9$\r$\n'
+  ${endif}
+
+  Push $0
 FunctionEnd
