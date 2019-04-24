@@ -1,5 +1,6 @@
 !include LogicLib.nsh
 !include "MUI2.nsh"
+!include nsDialogs.nsh
 
 ;-------------------------------------
 ; The installer and uninstaller file names
@@ -23,6 +24,7 @@ RequestExecutionLevel admin
 ;--------------------------------
 ; Pages install
 !insertmacro MUI_PAGE_WELCOME
+Page custom MyPageFunc MyPageFuncLeave
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 ; Pages uninstall
@@ -34,6 +36,15 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 ; Variables can be only global, so they are initialized here together
+Var username
+Var password
+Var usernameTextBox
+Var passwordTextBox
+Var dialog
+Var labelUsername
+Var labelPassword
+Var label
+Var button
 
 Section "Install"
   SectionIn RO
@@ -74,12 +85,12 @@ Section "Uninstall"
   StrCpy $0 $INSTDIR
   StrCpy $1 0
   loop:
-      IntOp $1 $1 - 1
-      StrCpy $2 $0 1 $1
-      StrCmp $2 '\' found
-      StrCmp $2 '' stop loop
+    IntOp $1 $1 - 1
+    StrCpy $2 $0 1 $1
+    StrCmp $2 '\' found
+    StrCmp $2 '' stop loop
   found:
-      IntOp $1 $1 + 1
+    IntOp $1 $1 + 1
   stop:
   StrCpy $2 $0 "" $1
 
@@ -90,3 +101,37 @@ Section "Uninstall"
     Abort
   ${EndIf}
 SectionEnd ; End uninstall section
+
+Function MyPageFunc
+  nsDialogs::Create 1018
+  Pop $dialog
+
+  ${NSD_CreateLabel} 0 0 300u 10u "If you are not registered on RBR tournament plugin, click the button underneath."
+  Pop $label
+  ${NSD_CreateLabel} 0 15 300u 10u "After registring, enter your username and password into textboxes below and click next."
+  Pop $label
+
+  ${NSD_CreateButton} 0 40 120u 15u "Register on rbr.onlineracing.cz"
+  Pop $button
+  ${NSD_OnClick} $button openRBRTMRegister
+
+  ${NSD_CreateLabel} 0 75 50u 10u "Username:"
+  Pop $labelUsername
+  ${NSD_CreateText} 70 75 100u 12u ""
+  Pop $usernameTextBox
+
+  ${NSD_CreateLabel} 0 100 50u 10u "Password:"
+  Pop $labelPassword
+  ${NSD_CreateText} 70 100 100u 12u ""
+  Pop $passwordTextBox
+  nsDialogs::Show
+FunctionEnd
+
+Function MyPageFuncLeave
+  ${NSD_GetText} $usernameTextBox $username
+  ${NSD_GetText} $passwordTextBox $password
+FunctionEnd
+
+Function openRBRTMRegister
+  ExecShell "open" "http://rbr.onlineracing.cz/forum/profile.php?mode=register"
+FunctionEnd
