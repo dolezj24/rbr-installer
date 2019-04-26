@@ -1,7 +1,5 @@
 !include LogicLib.nsh
 !include "MUI2.nsh"
-!include nsDialogs.nsh
-!include "textfunc.nsh"
 
 ;-------------------------------------
 ; The installer and uninstaller file names
@@ -25,7 +23,6 @@ RequestExecutionLevel admin
 ;--------------------------------
 ; Pages install
 !insertmacro MUI_PAGE_WELCOME
-Page custom AccPageFunc AccPageFuncLeave
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 ; Pages uninstall
