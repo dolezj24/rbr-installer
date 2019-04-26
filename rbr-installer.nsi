@@ -1,7 +1,6 @@
 !include LogicLib.nsh
 !include "MUI2.nsh"
 
-RequestExecutionLevel admin
 ;-------------------------------------
 ; The installer and uninstaller file names
 OutFile "installer.exe"
@@ -10,15 +9,16 @@ OutFile "installer.exe"
 ;--------------------------------------
 ; The name of the installer
 Name "Richard Burns Rally"
+DirText "$(DIR_TEXT)"
+#InstallDir "D:\Hry\RBR_modifikace\Instalatory\rbr\test-dir"
+InstallDir "C:\"
+
+RequestExecutionLevel admin
 
 ;--------------------------------
 ;Interface Settings
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TEXT "You are installing Richard Burns Rally with Tournament plugin and NGP Physics."
-
-DirText "Select folder, where Richard Burns Rally will be installed. It is recommended to install RBR outside program files." "Folder"
-#InstallDir "test-dir"
-InstallDir "C:\"
+!define MUI_WELCOMEPAGE_TEXT "$(WELCOMEPAGE_TEXT)"
 
 ;--------------------------------
 ; Pages install
@@ -30,7 +30,10 @@ InstallDir "C:\"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ;--------------------------------
-!insertmacro MUI_LANGUAGE "English"
+!include "langmacros.nsh"
+
+!insertmacro LANG_LOAD "English"
+!insertmacro LANG_LOAD "Czech"
 
 ;--------------------------------
 
@@ -66,6 +69,10 @@ Section "Install"
   
 SectionEnd ; end the install section
 
+Function un.onInit
+  !insertmacro MUI_UNGETLANGUAGE
+FunctionEnd
+
 Section "Uninstall"
   DeleteRegKey HKLM "SOFTWARE\SCi Games\Richard Burns Rally"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally"
@@ -74,19 +81,19 @@ Section "Uninstall"
   StrCpy $0 $INSTDIR
   StrCpy $1 0
   loop:
-      IntOp $1 $1 - 1
-      StrCpy $2 $0 1 $1
-      StrCmp $2 '\' found
-      StrCmp $2 '' stop loop
+    IntOp $1 $1 - 1
+    StrCpy $2 $0 1 $1
+    StrCmp $2 '\' found
+    StrCmp $2 '' stop loop
   found:
-      IntOp $1 $1 + 1
+    IntOp $1 $1 + 1
   stop:
   StrCpy $2 $0 "" $1
 
   ${If} $2 == "RichardBurnsRally"
     RMDir /r "$INSTDIR"
   ${Else}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Install directory changed or renamed, files won't be deleted. Delete rbr files by hand."
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(UNINSTALLER_FAIL_TEXT)"
     Abort
   ${EndIf}
 SectionEnd ; End uninstall section
