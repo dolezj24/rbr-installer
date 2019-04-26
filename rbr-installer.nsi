@@ -11,8 +11,8 @@ OutFile "Richard Burns Rally.exe"
 ;--------------------------------------
 ; The name of the installer
 Name "Richard Burns Rally"
-DirText "Select folder, where Richard Burns Rally will be installed. It is recommended to install RBR outside program files." "Folder"
-#InstallDir "test-dir"
+DirText "$(DIR_TEXT)"
+#InstallDir "D:\Hry\RBR_modifikace\Instalatory\rbr\test-dir"
 InstallDir "C:\"
 
 RequestExecutionLevel admin
@@ -20,8 +20,7 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Interface Settings
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TEXT "You are installing Richard Burns Rally with Tournament plugin and NGP Physics."
-
+!define MUI_WELCOMEPAGE_TEXT "$(WELCOMEPAGE_TEXT)"
 
 ;--------------------------------
 ; Pages install
@@ -34,7 +33,10 @@ Page custom AccPageFunc AccPageFuncLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ;--------------------------------
-!insertmacro MUI_LANGUAGE "English"
+!include "langmacros.nsh"
+
+!insertmacro LANG_LOAD "English"
+!insertmacro LANG_LOAD "Czech"
 
 ;--------------------------------
 ; Variables can be only global, so they are initialized here together
@@ -47,6 +49,10 @@ Var labelUsername
 Var labelPassword
 Var label
 Var button
+
+Function .onInit
+  !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
 
 Section "Install"
   SectionIn RO
@@ -77,11 +83,15 @@ Section "Install"
   FileWrite $4 "YRes = $1$\r$\n"
   FileClose $4
 
-#  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
+  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
 
   WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
   
 SectionEnd ; end the install section
+
+Function un.onInit
+  !insertmacro MUI_UNGETLANGUAGE
+FunctionEnd
 
 Section "Uninstall"
   DeleteRegKey HKLM "SOFTWARE\SCi Games\Richard Burns Rally"
@@ -103,33 +113,33 @@ Section "Uninstall"
   ${If} $2 == "RichardBurnsRally"
     RMDir /r "$INSTDIR"
   ${Else}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Install directory changed or renamed, files won't be deleted. You can delete them by yourself."
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(UNINSTALLER_FAIL_TEXT)"
     Abort
   ${EndIf}
 SectionEnd ; End uninstall section
 
 Function AccPageFunc
-  !insertmacro MUI_HEADER_TEXT "Tournament plugin account" ""
+  !insertmacro MUI_HEADER_TEXT "$(ACCOUNT_PAGE_HEADER)" ""
   nsDialogs::Create 1018
   Pop $dialog
 
-  ${NSD_CreateLabel} 0 0 300u 10u "If you are not registered on RBR tournament plugin, click the button underneath."
+  ${NSD_CreateLabel} 0 0 300u 10u "$(LABEL1)"
   Pop $label
-  ${NSD_CreateLabel} 0 15 300u 10u "After registring, enter your username and password into textboxes below and click next."
+  ${NSD_CreateLabel} 0 15 300u 10u "$(LABEL2)"
   Pop $label
 
-  ${NSD_CreateButton} 0 40 120u 15u "Register on rbr.onlineracing.cz"
+  ${NSD_CreateButton} 0 40 120u 15u "$(BUTTON_TEXT)"
   Pop $button
   ${NSD_OnClick} $button openRBRTMRegister
 
-  ${NSD_CreateLabel} 0 75 50u 10u "Username:"
+  ${NSD_CreateLabel} 0 75 70u 10u "$(USERNAME_LABEL)"
   Pop $labelUsername
-  ${NSD_CreateText} 70 75 100u 12u ""
+  ${NSD_CreateText} 100 75 100u 12u ""
   Pop $usernameTextBox
 
-  ${NSD_CreateLabel} 0 100 50u 10u "Password:"
+  ${NSD_CreateLabel} 0 100 70u 10u "$(PASSWORD_LABEL)"
   Pop $labelPassword
-  ${NSD_CreateText} 70 100 100u 12u ""
+  ${NSD_CreateText} 100 100 100u 12u ""
   Pop $passwordTextBox
   nsDialogs::Show
 FunctionEnd
