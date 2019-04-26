@@ -72,8 +72,6 @@ Section "Install"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoRepair" 1
 
-  ${LineFind} "$INSTDIR\RichardBurnsRally\RichardBurnsRally.ini" "" "1:-1" "TestRBRIniLine"
-
   System::Call 'user32::GetSystemMetrics(i 0) i .r0'
   System::Call 'user32::GetSystemMetrics(i 1) i .r1'
 
@@ -117,52 +115,3 @@ Section "Uninstall"
     Abort
   ${EndIf}
 SectionEnd ; End uninstall section
-
-Function AccPageFunc
-  !insertmacro MUI_HEADER_TEXT "$(ACCOUNT_PAGE_HEADER)" ""
-  nsDialogs::Create 1018
-  Pop $dialog
-
-  ${NSD_CreateLabel} 0 0 300u 10u "$(LABEL1)"
-  Pop $label
-  ${NSD_CreateLabel} 0 15 300u 10u "$(LABEL2)"
-  Pop $label
-
-  ${NSD_CreateButton} 0 40 120u 15u "$(BUTTON_TEXT)"
-  Pop $button
-  ${NSD_OnClick} $button openRBRTMRegister
-
-  ${NSD_CreateLabel} 0 75 70u 10u "$(USERNAME_LABEL)"
-  Pop $labelUsername
-  ${NSD_CreateText} 100 75 100u 12u ""
-  Pop $usernameTextBox
-
-  ${NSD_CreateLabel} 0 100 70u 10u "$(PASSWORD_LABEL)"
-  Pop $labelPassword
-  ${NSD_CreateText} 100 100 100u 12u ""
-  Pop $passwordTextBox
-  nsDialogs::Show
-FunctionEnd
-
-Function AccPageFuncLeave
-  ${NSD_GetText} $usernameTextBox $username
-  ${NSD_GetText} $passwordTextBox $password
-FunctionEnd
-
-Function openRBRTMRegister
-  ExecShell "open" "http://rbr.onlineracing.cz/forum/profile.php?mode=register"
-FunctionEnd
-
-Function TestRBRIniLine
-  ${TrimNewLines} '$R9' $R9
-
-  ${if} $R9 == "AutoLoginName = "
-    StrCpy $R9 "AutoLoginName = $username$\r$\n"
-  ${elseif} $R9 == "AutoLoginPassword = "
-    StrCpy $R9 "AutoLoginPassword = $password$\r$\n"
-  ${else}
-    StrCpy $R9 '$R9$\r$\n'
-  ${endif}
-
-  Push $0
-FunctionEnd
