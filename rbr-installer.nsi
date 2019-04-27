@@ -3,6 +3,7 @@
 !include nsDialogs.nsh
 !include "textfunc.nsh"
 
+Unicode True
 ;-------------------------------------
 ; The installer and uninstaller file names
 OutFile "Richard Burns Rally.exe"
@@ -62,10 +63,20 @@ Section "Install"
   File /r "rbr-files\"
 #  File rbr-files\RichardBurnsRally.ini
 #  File rbr-files\RichardBurnsRally_SSE.exe
+#  File rbr-files\Plugins\Pacenote\PaceNote.ini
+#  File /r rbr-files\Audio\Game
+#  File /r rbr-files\Audio\Game-cz
 
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\1.00.000" "" ""
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\InstallPath" "" "$INSTDIR\RichardBurnsRally"
-  WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\Language" "" "English"
+  ${if} $LANGUAGE == 1033 ;English
+    WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\Language" "" "English"
+  ${elseif} $LANGUAGE == 1029 ;Czech
+    WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\Language" "" "Czech"
+    ${LineFind} "$INSTDIR\RichardBurnsRally\Plugins\Pacenote\PaceNote.ini" "" "1:-1" "SetPacenoteLang"
+    Rename "$INSTDIR\RichardBurnsRally\Audio\Game" "$INSTDIR\RichardBurnsRally\Audio\Game-en"
+    Rename "$INSTDIR\RichardBurnsRally\Audio\Game-cz" "$INSTDIR\RichardBurnsRally\Audio\Game"
+  ${endif}
 
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "DisplayName" "Richard Burns Rally"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "UninstallString" '"$INSTDIR\RichardBurnsRally\${UNINSTALLER}"'
@@ -83,6 +94,7 @@ Section "Install"
   FileWrite $4 "YRes = $1$\r$\n"
   FileClose $4
 
+  SetShellVarContext all
   CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
 
   WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
@@ -94,6 +106,7 @@ Function un.onInit
 FunctionEnd
 
 Section "Uninstall"
+  SetShellVarContext all
   DeleteRegKey HKLM "SOFTWARE\SCi Games\Richard Burns Rally"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally"
   Delete "$DESKTOP\RichardBurnsRally.lnk"
@@ -160,6 +173,20 @@ Function TestRBRIniLine
     StrCpy $R9 "AutoLoginName = $username$\r$\n"
   ${elseif} $R9 == "AutoLoginPassword = "
     StrCpy $R9 "AutoLoginPassword = $password$\r$\n"
+  ${else}
+    StrCpy $R9 '$R9$\r$\n'
+  ${endif}
+
+  Push $0
+FunctionEnd
+
+Function SetPacenoteLang
+  ${TrimNewLines} '$R9' $R9
+
+  ${if} $R9 == "language=english"
+    StrCpy $R9 "language=czech$\r$\n"
+  ${elseif} $R9 == "sounds=english/male/steve"
+    StrCpy $R9 "sounds=czech$\r$\n"
   ${else}
     StrCpy $R9 '$R9$\r$\n'
   ${endif}
