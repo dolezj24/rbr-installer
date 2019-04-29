@@ -58,7 +58,7 @@ FunctionEnd
 Section "Install"
   SectionIn RO
 
-  SetOutPath "$INSTDIR\RichardBurnsRally"
+  SetOutPath "$INSTDIR"
 
   File /r "rbr-files\"
 #  File rbr-files\RichardBurnsRally.ini
@@ -68,18 +68,18 @@ Section "Install"
 #  File /r rbr-files\Audio\Game-cz
 
   WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\1.00.000" "" ""
-  WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\InstallPath" "" "$INSTDIR\RichardBurnsRally"
+  WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\InstallPath" "" "$INSTDIR"
   ${if} $LANGUAGE == 1033 ;English
     WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\Language" "" "English"
   ${elseif} $LANGUAGE == 1029 ;Czech
     WriteRegStr HKLM "SOFTWARE\SCi Games\Richard Burns Rally\Language" "" "Czech"
-    ${LineFind} "$INSTDIR\RichardBurnsRally\Plugins\Pacenote\PaceNote.ini" "" "1:-1" "SetPacenoteLang"
-    Rename "$INSTDIR\RichardBurnsRally\Audio\Game" "$INSTDIR\RichardBurnsRally\Audio\Game-en"
-    Rename "$INSTDIR\RichardBurnsRally\Audio\Game-cz" "$INSTDIR\RichardBurnsRally\Audio\Game"
+    ${LineFind} "$INSTDIR\Plugins\Pacenote\PaceNote.ini" "" "1:-1" "SetPacenoteLang"
+    Rename "$INSTDIR\Audio\Game" "$INSTDIR\Audio\Game-en"
+    Rename "$INSTDIR\Audio\Game-cz" "$INSTDIR\Audio\Game"
   ${endif}
 
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "DisplayName" "Richard Burns Rally"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "UninstallString" '"$INSTDIR\RichardBurnsRally\${UNINSTALLER}"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "UninstallString" '"$INSTDIR\${UNINSTALLER}"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoRepair" 1
 
@@ -88,16 +88,16 @@ Section "Install"
   System::Call 'user32::GetSystemMetrics(i 0) i .r0'
   System::Call 'user32::GetSystemMetrics(i 1) i .r1'
 
-  FileOpen $4 "$INSTDIR\RichardBurnsRally\RichardBurnsRally.ini" a
+  FileOpen $4 "$INSTDIR\RichardBurnsRally.ini" a
   FileSeek $4 0 END
   FileWrite $4 "XRes = $0$\r$\n"
   FileWrite $4 "YRes = $1$\r$\n"
   FileClose $4
 
   SetShellVarContext all
-  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
+  CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally_SSE.exe"
 
-  WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
+  WriteUninstaller "$INSTDIR\${UNINSTALLER}"
   
 SectionEnd ; end the install section
 
@@ -111,24 +111,10 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally"
   Delete "$DESKTOP\RichardBurnsRally.lnk"
 
-  StrCpy $0 $INSTDIR
-  StrCpy $1 0
-  loop:
-    IntOp $1 $1 - 1
-    StrCpy $2 $0 1 $1
-    StrCmp $2 '\' found
-    StrCmp $2 '' stop loop
-  found:
-    IntOp $1 $1 + 1
-  stop:
-  StrCpy $2 $0 "" $1
+  !include "to-delete.nsh"
+  !insertmacro UNINSTALL_FILES
 
-  ${If} $2 == "RichardBurnsRally"
-    RMDir /r "$INSTDIR"
-  ${Else}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(UNINSTALLER_FAIL_TEXT)"
-    Abort
-  ${EndIf}
+  Delete $INSTDIR\${UNINSTALLER}
 SectionEnd ; End uninstall section
 
 Function AccPageFunc
