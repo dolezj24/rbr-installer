@@ -72,6 +72,7 @@ Section "Install"
   FileClose $4
 
   SetShellVarContext all
+  SetOutPath "$INSTDIR\RichardBurnsRally"
   CreateShortcut "$DESKTOP\RichardBurnsRally.lnk" "$INSTDIR\RichardBurnsRally\RichardBurnsRally_SSE.exe"
 
   WriteUninstaller "$INSTDIR\RichardBurnsRally\${UNINSTALLER}"
