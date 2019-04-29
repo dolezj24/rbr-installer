@@ -39,6 +39,10 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
+Function .onInit
+  !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
+
 Section "Install"
   SectionIn RO
 
