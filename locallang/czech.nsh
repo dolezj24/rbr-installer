@@ -1,4 +1,4 @@
 !define LANG "CZECH"
-!insertmacro LANG_STRING WELCOMEPAGE_TEXT "Instaluješ hru Richard Burns Rally s èeskım turnajovım pluginem a fyzikou NGP."
-!insertmacro LANG_STRING DIR_TEXT "Vyber adresáø, kde bude RBR nainstalováno. Obecnì je doporuèeno nainstalovat RBR mimo Program Files."
-!insertmacro LANG_STRING UNINSTALLER_FAIL_TEXT "Instalaèní adresáø byl zmìnìn èi pøejmenovám, z bezpeènostních dùvodù nebudou soubory RBR smazány. Mùueš je ale smazat ruènì."
+!insertmacro LANG_STRING WELCOMEPAGE_TEXT "InstalujeÅ¡ hru Richard Burns Rally s ÄeskÃ½m turnajovÃ½m pluginem a fyzikou NGP."
+!insertmacro LANG_STRING DIR_TEXT "Vyber adresÃ¡Å™, kde bude RBR nainstalovÃ¡no. ObecnÄ› je doporuÄeno nainstalovat RBR mimo Program Files."
+!insertmacro LANG_STRING UNINSTALLER_FAIL_TEXT "InstalaÄnÃ­ adresÃ¡Å™ byl zmÄ›nÄ›n Äi pÅ™ejmenovÃ¡m, z bezpeÄnostnÃ­ch dÅ¯vodÅ¯ nebudou soubory RBR smazÃ¡ny. MÅ¯Å¾ueÅ¡ je ale smazat ruÄnÄ›."
