@@ -83,7 +83,7 @@ Section "Install"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Richard Burns Rally" "NoRepair" 1
 
-  ${LineFind} "$INSTDIR\RichardBurnsRally\RichardBurnsRally.ini" "" "1:-1" "TestRBRIniLine"
+  ${LineFind} "$INSTDIR\RichardBurnsRally.ini" "" "1:-1" "TestRBRIniLine"
 
   System::Call 'user32::GetSystemMetrics(i 0) i .r0'
   System::Call 'user32::GetSystemMetrics(i 1) i .r1'
