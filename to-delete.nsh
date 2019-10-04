@@ -25,7 +25,8 @@ Delete $INSTDIR\msvcr70.dll
 Delete $INSTDIR\msvcr71.dll 
 Delete $INSTDIR\msvcrt.dll 
 Delete $INSTDIR\physics.rbz 
-Delete $INSTDIR\RBR 
+Delete $INSTDIR\RBR Startup.exe 
+Delete $INSTDIR\rbr-files.exe 
 Delete $INSTDIR\RBRCIT.exe 
 Delete $INSTDIR\RBRCIT.ini 
 Delete $INSTDIR\RBRCIT.readme.txt 
