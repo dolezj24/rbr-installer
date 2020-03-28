@@ -131,14 +131,14 @@ Function AccPageFunc
   Pop $button
   ${NSD_OnClick} $button openRBRTMRegister
 
-  ${NSD_CreateLabel} 0 75 70u 10u "$(USERNAME_LABEL)"
+  ${NSD_CreateLabel} 0 75 60u 10u "$(USERNAME_LABEL)"
   Pop $labelUsername
   ${NSD_CreateText} 100 75 100u 12u ""
   Pop $usernameTextBox
 
-  ${NSD_CreateLabel} 0 100 70u 10u "$(PASSWORD_LABEL)"
+  ${NSD_CreateLabel} 0 100 60u 10u "$(PASSWORD_LABEL)"
   Pop $labelPassword
-  ${NSD_CreateText} 100 100 100u 12u ""
+  ${NSD_CreatePassword} 100 100 100u 12u ""
   Pop $passwordTextBox
   nsDialogs::Show
 FunctionEnd
